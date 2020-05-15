@@ -70,7 +70,7 @@ def traverse(user):
         traversal_path.append(move)
 
 traverse(player)
-#print(traversal_path)
+print(traversal_path)
 
 
 # TRAVERSAL TEST - DO NOT MODIFY
