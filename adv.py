@@ -5,15 +5,17 @@ from world import World
 import random
 from ast import literal_eval
 
+from util import Queue, Stack
+
 # Load world
 world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-# map_file = "maps/test_line.txt"
-# map_file = "maps/test_cross.txt"
-# map_file = "maps/test_loop.txt"
-# map_file = "maps/test_loop_fork.txt"
+#map_file = "maps/test_line.txt"
+#map_file = "maps/test_cross.txt"
+#map_file = "maps/test_loop.txt"
+#map_file = "maps/test_loop_fork.txt"
 map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
@@ -29,6 +31,46 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 
+def traverse(user):
+    visited = set()
+
+    def reverse(l):
+        if l is 'n':
+            return 's'
+        if l is 's':
+            return 'n'
+        if l is 'e':
+            return 'w'
+        if l is 'w':
+            return 'e'
+
+    def sub_traverse(room, visited=None):
+        sub_path = []
+        visited.add(room)
+
+        for exit in room.get_exits():
+
+            adjacent_room = room.get_room_in_direction(exit)
+
+            if adjacent_room not in visited:
+                room_path = sub_traverse(adjacent_room, visited)
+
+                if room_path is not None:
+                    temp_path = [exit] + room_path + [reverse(exit)]
+
+                else:
+                    temp_path = exit + reverse(exit)
+
+                sub_path += temp_path
+
+        return sub_path
+
+    new_moves = sub_traverse(user.current_room, visited)
+    for move in new_moves:
+        traversal_path.append(move)
+
+traverse(player)
+#print(traversal_path)
 
 
 # TRAVERSAL TEST - DO NOT MODIFY
@@ -51,6 +93,7 @@ else:
 #######
 # UNCOMMENT TO WALK AROUND
 #######
+"""
 player.current_room.print_room_description(player)
 while True:
     cmds = input("-> ").lower().split(" ")
@@ -60,3 +103,4 @@ while True:
         break
     else:
         print("I did not understand that command.")
+"""
